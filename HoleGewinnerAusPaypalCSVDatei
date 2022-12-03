@@ -1,0 +1,46 @@
+import csv
+from random import randrange
+
+# objekt der teilnehmer
+# jeder teilnehmer an dem gewinnspiel hat einen namen und eine losnr
+class Teilnehmer:
+  def __init__(self, name, losNr):
+    self.name = name
+    self.losNr = losNr
+
+# wenn jemand was für 1000 kauft, macht paypal daraus ein 1.000
+# damit wir die zahl 1000 rausbekommen, gehen wir durch die zahl 1.000 als zeichenkette,
+# dabei entfernen wir den punkt und machen daraus eine zahl
+def getZahlAuchWennUeberTausend(zahl):
+    zahlAlsString = int("".join([c for c in zahl[:zahl.find(',')] if c.isdigit()]))
+    return zahlAlsString
+
+# wir öffnen die datei der paypal datenbank
+# gehen durch alle transaktionen und starten mit der losNr.1 
+# wir schauen ob es ein kauf von uns war, dann ist das erste zeichen des 
+# brutto betrages '-', diese transaktionen schauen wir uns nicht an
+# danach machen wir aus tausenderZahlen eine normale zahl --> normale zahlen bleiben so
+# wir betrachen nur teilnehmer die einen namen bei paypal hinterlegt haben
+# nur betraege >= 2 werden betrachtet, außerdem muss der betrag durch 2 teilbar sein
+# dann werden für alle 2€, einmal der name in die urne geworfen und die losNr erhöht
+def getTeilnehmer():
+    alleTeilnehmer = []
+    with open('C:/Users/Markus/Downloads/paypal.CSV', newline='', encoding = "utf-8") as csvfile:
+        losNr = 1
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            if str(row['Brutto'])[0] != '-':
+                betrag = getZahlAuchWennUeberTausend(row['Brutto'])
+                if len(row['Name']) > 1 and betrag >= 2 and betrag % 2 == 0:
+                   for i in range(int(betrag / 2)):
+                       alleTeilnehmer.append(Teilnehmer(row['Name'], losNr))
+                       losNr += 1
+    return alleTeilnehmer
+
+# der Gewinner ist der Teilnehmer an einer zufälliger Stelle in unserer Urne
+def getGewinner(teilnehmer):
+    print(teilnehmer[randrange(len(teilnehmer))].name)
+    
+if __name__ == '__main__':
+    getGewinner(getTeilnehmer())
+    
