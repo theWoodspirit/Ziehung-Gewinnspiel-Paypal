@@ -5,9 +5,8 @@ from random import randrange
 # objekt der teilnehmer
 # jeder teilnehmer an dem gewinnspiel hat einen namen und eine losnr
 class Teilnehmer:
-  def __init__(self, name, losNr):
+  def __init__(self, name):
     self.name = name
-    self.losNr = losNr
 
 # wenn jemand was für 1000 kauft, macht paypal daraus ein 1.000
 # damit wir die zahl 1000 rausbekommen, gehen wir durch die zahl 1.000 als zeichenkette,
@@ -27,15 +26,13 @@ def getZahlAuchWennUeberTausend(zahl):
 def getTeilnehmer():
     alleTeilnehmer = []
     with open('C:/Users/Markus/Downloads/paypal.CSV', newline='', encoding = "utf-8") as csvfile:
-        losNr = 1
         reader = csv.DictReader(csvfile)
         for row in reader:
             if str(row['Brutto'])[0] != '-':
                 betrag = getZahlAuchWennUeberTausend(row['Brutto'])
                 if len(row['Name']) > 1 and betrag >= 2 and betrag % 2 == 0:
                    for i in range(int(betrag / 2)):
-                       alleTeilnehmer.append(Teilnehmer(row['Name'], losNr))
-                       losNr += 1
+                       alleTeilnehmer.append(Teilnehmer(row['Name']))
     return alleTeilnehmer
 
 # der Gewinner ist der Teilnehmer an einer zufälliger Stelle in unserer Urne
