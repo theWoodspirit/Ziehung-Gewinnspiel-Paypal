@@ -1,4 +1,5 @@
 import csv
+import random
 from random import randrange
 
 # objekt der teilnehmer
@@ -39,6 +40,7 @@ def getTeilnehmer():
 
 # der Gewinner ist der Teilnehmer an einer zufälliger Stelle in unserer Urne
 def getGewinner(teilnehmer):
+    random.shuffle(teilnehmer)
     print(teilnehmer[randrange(len(teilnehmer))].name)
     
 if __name__ == '__main__':
